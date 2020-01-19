@@ -40,7 +40,7 @@ end
 
 script.on_event(defines.events.on_player_died, function (event)
     chat("Oops")
-    chat(sarcasm[(event.player_index + event.tick) % #sarcasm])
+    chat(sarcasm[(event.player_index + event.tick) % #sarcasm + 1])
 end)
 
 script.on_event(defines.events.on_console_chat, function (event)
