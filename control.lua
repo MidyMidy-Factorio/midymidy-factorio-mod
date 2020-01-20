@@ -56,3 +56,10 @@ script.on_event(defines.events.on_console_chat, function (event)
         end
     end
 end)
+
+commands.add_command("me", {"command-help.me"}, function (cmd)
+    if cmd.player_index then
+        local name = game.get_player(cmd.player_index).name
+        game.print("* " .. name .. " " .. (cmd.parameter or ""))
+    end
+end)
