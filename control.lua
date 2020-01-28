@@ -38,9 +38,21 @@ function chat(line)
     game.print(chat_title .. line)
 end
 
+function send_update(table)
+    local json = game.table_to_json(table)
+    game.write_file("midymidy-factorio-updates", json, true, 0)
+end
+
 script.on_event(defines.events.on_player_died, function (event)
+    local s = sarcasm[(event.player_index + event.tick) % #sarcasm + 1]
     chat("Oops")
-    chat(sarcasm[(event.player_index + event.tick) % #sarcasm + 1])
+    chat(s)
+    send_update({
+        type = "oops",
+        player_index = event.player_index,
+        player_name = game.get_player(event.player_index).name,
+        sarcasm = s
+    })
 end)
 
 script.on_event(defines.events.on_console_chat, function (event)
@@ -54,6 +66,13 @@ script.on_event(defines.events.on_console_chat, function (event)
             local c = game.get_player(event.player_index).character
             if c then c.die(c.force) end
         end
+
+        send_update({
+            type = "console-chat",
+            player_index = event.player_index,
+            player_name = game.get_player(event.player_index).name,
+            message = event.message
+        })
     end
 end)
 
@@ -61,5 +80,12 @@ commands.add_command("me", {"command-help.me"}, function (cmd)
     if cmd.player_index then
         local name = game.get_player(cmd.player_index).name
         game.print("* " .. name .. " " .. (cmd.parameter or ""))
+
+        send_update({
+            type = "console-me",
+            player_index = cmd.player_index,
+            player_name = name,
+            message = cmd.parameter
+        })
     end
 end)
