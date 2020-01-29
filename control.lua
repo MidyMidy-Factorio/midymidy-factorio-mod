@@ -101,5 +101,19 @@ commands.add_command("_midymidyws", "Fuck off!", function (cmd)
             rcon.print(global.updates[1])
             table.remove(global.updates, 1)
         end
+    elseif cmd.parameter == "get_players" then
+        local players = {}
+        for _, p in pairs(game.players) do
+            table.insert(players, {
+                name = p.name,
+                connected = p.connected,
+                afk_time = p.afk_time,
+                online_time = p.online_time,
+                last_online = p.last_online,
+                display_resolution = p.display_resolution,
+                spectator = p.spectator
+            })
+        end
+        rcon.print(game.table_to_json({ players = players }))
     end
 end)
