@@ -38,9 +38,12 @@ function chat(line)
     game.print(chat_title .. line)
 end
 
-function send_update(table)
-    local json = game.table_to_json(table)
-    game.write_file("midymidy-factorio-updates", json, true, 0)
+function send_update(t)
+    local json = game.table_to_json(t)
+    if not global.updates then
+        global.updates = {}
+    end
+    table.insert(global.updates, json)
 end
 
 script.on_event(defines.events.on_player_died, function (event)
@@ -87,5 +90,16 @@ commands.add_command("me", {"command-help.me"}, function (cmd)
             player_name = name,
             message = cmd.parameter
         })
+    end
+end)
+
+commands.add_command("_midymidyws", "Fuck off!", function (cmd)
+    if cmd.parameter == "get_update" then
+        if not global.updates or #global.updates == 0 then
+            rcon.print("{type:\"empty\"}")
+        else
+            rcon.print(global.updates[1])
+            table.remove(global.updates, 1)
+        end
     end
 end)

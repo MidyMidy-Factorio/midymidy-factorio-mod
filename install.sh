@@ -7,5 +7,5 @@ rm ~/.factorio/mods/midymidy-factorio-mod_*.zip
 cp $name.zip ~/.factorio/mods/
 rm -rf $name
 if [[ $1 = "-u" ]]; then 
-    cat ~/.factorio/mods/$name.zip | ssh factorio@factorio.nicball.space "rm /opt/factorio/mods/midymidy-factorio-mod_*.zip; cat > /opt/factorio/mods/$name.zip;"
+    pv ~/.factorio/mods/$name.zip | ssh factorio@factorio.nicball.space "rm ~/factorio/factorio/mods/midymidy-factorio-mod_*.zip; cat > ~/factorio/factorio/mods/$name.zip;"
 fi
