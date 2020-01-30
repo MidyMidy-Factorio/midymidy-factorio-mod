@@ -99,7 +99,7 @@ end)
 commands.add_command("_midymidyws", "Fuck off!", function (cmd)
     if cmd.parameter == "get_update" then
         if not global.updates or #global.updates == 0 then
-            rcon.print("{type:\"empty\"}")
+            rcon.print(game.table_to_json({ type = "empty" }))
         else
             rcon.print(global.updates[1])
             table.remove(global.updates, 1)
@@ -123,5 +123,6 @@ commands.add_command("_midymidyws", "Fuck off!", function (cmd)
         for _, msg in pairs(game.json_to_table(json).messages) do
             chat("<" .. msg.name .. "> " .. msg.message)
         end
+        rcon.print(game.table_to_json({ ok = true }))
     end
 end)
