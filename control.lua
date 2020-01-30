@@ -1,4 +1,5 @@
 local chat_title = "[color=green]MidyMidyFactorio: [/color]"
+local log_title = "MidyMidyFactorio: "
 
 local sarcasm = {
     "真弱鸡啊……",
@@ -36,6 +37,7 @@ local sarcasm = {
 
 function chat(line)
     game.print(chat_title .. line)
+    log(log_title .. line)
 end
 
 function send_update(t)
@@ -83,6 +85,7 @@ commands.add_command("me", {"command-help.me"}, function (cmd)
     if cmd.player_index then
         local name = game.get_player(cmd.player_index).name
         game.print("* " .. name .. " " .. (cmd.parameter or ""))
+        log("* " .. name .. " " .. (cmd.parameter or ""))
 
         send_update({
             type = "console-me",
@@ -115,5 +118,10 @@ commands.add_command("_midymidyws", "Fuck off!", function (cmd)
             })
         end
         rcon.print(game.table_to_json({ players = players }))
+    elseif string.find(cmd.parameter, "post_messages", 1, true) == 1 then
+        local json = string.sub(cmd.parameter, #"post_messages" + 2)
+        for _, msg in pairs(game.json_to_table(json).messages) do
+            chat("<" .. msg.name .. "> " .. msg.message)
+        end
     end
 end)
