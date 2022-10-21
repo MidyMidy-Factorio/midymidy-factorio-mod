@@ -1,3 +1,4 @@
+local translate = require("translations")
 local chat_title = "[color=green]MidyMidyFactorio: [/color]"
 local log_title = "MidyMidyFactorio: "
 
@@ -48,7 +49,7 @@ function send_update(t)
     table.insert(global.updates, json)
 end
 
-script.on_event(defines.events.on_player_died, function (event)
+script.on_event(defines.events.on_pre_player_died, function (event)
     local s = sarcasm[(event.player_index + event.tick) % #sarcasm + 1]
     chat("Oops")
     chat(s)
@@ -57,6 +58,43 @@ script.on_event(defines.events.on_player_died, function (event)
         player_index = event.player_index,
         player_name = game.get_player(event.player_index).name,
         sarcasm = s
+    })
+end)
+
+script.on_event(defines.events.on_player_joined_game, function (event)
+    send_update({
+        type = "player-joined",
+        player_index = event.player_index,
+        player_name = game.get_player(event.player_index).name
+    })
+end)
+
+script.on_event(defines.events.on_player_left_game, function (event)
+    send_update({
+        type = "player-left",
+        player_index = event.player_index,
+        player_name = game.get_player(event.player_index).name
+    })
+end)
+
+script.on_event(defines.events.on_research_started, function (event)
+    send_update({
+      type = "research-started",
+      research_name = translate(event.research.name)
+    })
+end)
+
+script.on_event(defines.events.on_research_finished, function (event)
+    send_update({
+      type = "research-finished",
+      research_name = translate(event.research.name)
+    })
+end)
+
+script.on_event(defines.events.on_resource_depleted, function (event)
+    send_update({
+      type = "resource-depleted",
+      resource_name = translate(event.entity.name)
     })
 end)
 
@@ -118,7 +156,7 @@ commands.add_command("_midymidyws", "Fuck off!", function (cmd)
             })
         end
         rcon.print(game.table_to_json({ players = players }))
-    elseif string.find(cmd.parameter, "post_messages", 1, true) == 1 then
+    elseif cmd.parameter and string.find(cmd.parameter, "post_messages", 1, true) == 1 then
         local json = string.sub(cmd.parameter, #"post_messages" + 2)
         for _, msg in pairs(game.json_to_table(json).messages) do
             chat("<" .. msg.name .. "> " .. msg.message)
