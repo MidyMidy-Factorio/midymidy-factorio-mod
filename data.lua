@@ -15,3 +15,15 @@
 -- recipe.result = "psi-emitter-item"
 -- 
 -- data:extend({psi_emitter, item, recipe})
+
+data.raw["item"]["linked-chest"].flags = nil
+data.raw["item"]["linked-chest"].subgroup = "storage"
+data.raw["linked-container"]["linked-chest"].inventory_size = 512
+data.raw.recipe["linked-chest"] = {
+    ingredients = {
+        { "wood", 2 }
+    },
+    name = "linked-chest",
+    result = "linked-chest",
+    type = "recipe"
+}
