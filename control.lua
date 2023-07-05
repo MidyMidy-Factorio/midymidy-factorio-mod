@@ -134,6 +134,21 @@ commands.add_command("me", {"command-help.me"}, function (cmd)
     end
 end)
 
+commands.add_command("pin", {"command-help.pin"}, function (cmd)
+    if cmd.player_index then
+        local name = game.get_player(cmd.player_index).name
+        game.print(name .. ": " .. (cmd.parameter or ""))
+        log(name .. ": " .. (cmd.parameter or ""))
+
+        send_update({
+            type = "console-pin",
+            player_index = cmd.player_index,
+            player_name = name,
+            message = cmd.parameter
+        })
+    end
+end)
+
 commands.add_command("_midymidyws", "Fuck off!", function (cmd)
     if cmd.parameter == "get_update" then
         if not global.updates or #global.updates == 0 then
