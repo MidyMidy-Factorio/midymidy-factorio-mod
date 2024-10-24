@@ -42,11 +42,11 @@ function chat(line)
 end
 
 function send_update(t)
-    local json = game.table_to_json(t)
-    if not global.updates then
-        global.updates = {}
+    local json = helpers.table_to_json(t)
+    if not storage.updates then
+        storage.updates = {}
     end
-    table.insert(global.updates, json)
+    table.insert(storage.updates, json)
 end
 
 script.on_event(defines.events.on_pre_player_died, function (event)
@@ -151,11 +151,11 @@ end)
 
 commands.add_command("_midymidyws", "Fuck off!", function (cmd)
     if cmd.parameter == "get_update" then
-        if not global.updates or #global.updates == 0 then
-            rcon.print(game.table_to_json({ type = "empty" }))
+        if not storage.updates or #storage.updates == 0 then
+            rcon.print(helpers.table_to_json({ type = "empty" }))
         else
-            rcon.print(global.updates[1])
-            table.remove(global.updates, 1)
+            rcon.print(storage.updates[1])
+            table.remove(storage.updates, 1)
         end
     elseif cmd.parameter == "get_players" then
         local players = {}
@@ -170,12 +170,18 @@ commands.add_command("_midymidyws", "Fuck off!", function (cmd)
                 spectator = p.spectator
             })
         end
-        rcon.print(game.table_to_json({ players = players }))
+        rcon.print(helpers.table_to_json({ players = players }))
     elseif cmd.parameter and string.find(cmd.parameter, "post_messages", 1, true) == 1 then
         local json = string.sub(cmd.parameter, #"post_messages" + 2)
-        for _, msg in pairs(game.json_to_table(json).messages) do
+        for _, msg in pairs(helpers.json_to_table(json).messages) do
             chat("<" .. msg.name .. "> " .. msg.message)
         end
-        rcon.print(game.table_to_json({ ok = true }))
+        rcon.print(helpers.table_to_json({ ok = true }))
     end
+end)
+
+commands.add_command("toggle_peaceful", "Cheat but not counted as cheat!", function (cmd)
+  if cmd.player_index ~= nil then
+    game.players[cmd.player_index].surface.peaceful_mode = not game.players[cmd.player_index].surface.peaceful_mode
+  end
 end)
